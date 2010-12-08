@@ -2,7 +2,7 @@ package numeric
 
 trait Unital[@specialized A] {
   def e: A
-  def dual: Unital[A] = new Unital.Dual[A] {  
+  def dual: Unital[A] = new Unital.Dual[A] {
     override def dual: Unital[A] = Unital.this
   }
   def *[B](that: Unital[B]) = new Unital.Product[A,B] {
@@ -11,11 +11,11 @@ trait Unital[@specialized A] {
   }
 }
 
-object Unital { 
+object Unital {
   def apply[A](id: A) : Unital[A] = new Unital[A] {
     def e: A = id
   }
-  trait Dual[@specialized A] extends Unital[A] { 
+  trait Dual[@specialized A] extends Unital[A] {
     def e: A = dual.e
   }
   trait Product[A,B] extends Unital[(A,B)] {

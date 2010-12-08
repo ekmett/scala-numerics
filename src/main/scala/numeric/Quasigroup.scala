@@ -22,7 +22,11 @@ trait Quasigroup[@specialized A] extends Magma[A] {
     def _1: Quasigroup[A] = Quasigroup.this
     def _2: Quasigroup[B] = that
   }
-  implicit override def ops(a: A): Quasigroup.Ops[A] = new Quasigroup.Ops[A] { 
+  implicit override def multiplication(a: A): Quasigroup.Multiplication[A] = new Quasigroup.Multiplication[A] { 
+    def lhs: A = a
+    def numeric: Quasigroup[A] = Quasigroup.this
+  }
+  override def addition(a: A): Quasigroup.Addition[A] = new Quasigroup.Addition[A] { 
     def lhs: A = a
     def numeric: Quasigroup[A] = Quasigroup.this
   }
@@ -30,9 +34,9 @@ trait Quasigroup[@specialized A] extends Magma[A] {
 
 object Quasigroup { 
   def apply[A](
-    f:(A,A) => A,
-    o:(A,A) => A,
-    u:(A,A) => A
+    f: (A,A) => A,
+    o: (A,A) => A,
+    u: (A,A) => A
   ) : Quasigroup[A] = new Quasigroup[A] {
     def apply(a: A, b: A): A = f(a,b)
     def over(a: A, b: A): A = o(a,b)
@@ -43,10 +47,15 @@ object Quasigroup {
     def over(a: A, b: A): A = dual.over(b,a)
     def under(a: A, b: A): A = dual.under(b,a)
   }
-  trait Ops[@specialized A] extends Magma.Ops[A] {
+  trait Multiplication[@specialized A] extends Magma.Multiplication[A] {
     protected def numeric: Quasigroup[A]
     def /(rhs: A): A = numeric.over(lhs,rhs)
     def \(rhs: A): A = numeric.under(lhs,rhs)
+  }
+  trait Addition[@specialized A] extends Magma.Addition[A] {
+    protected def numeric: Quasigroup[A]
+    def -(rhs: A): A = numeric.over(lhs,rhs)
+    def subtract(rhs: A): A = numeric.under(lhs,rhs)
   }
   trait Product[A,B] extends Magma.Product[A,B] with Quasigroup[(A,B)] {
     def _1: Quasigroup[A]

@@ -1,8 +1,8 @@
 package numeric
 
-class Abelian { 
-  trait Magma[@specialized A] extends numeric.Magma[A] { 
-    override def dual: Magma[A] = new Magma.Dual[A] {  
+class Abelian {
+  trait Magma[@specialized A] extends numeric.Magma[A] {
+    override def dual: Magma[A] = new Magma.Dual[A] {
       override def dual: Magma[A] = Magma.this
     }
     def *[B](that: Magma[B]) = new Magma.Product[A,B] {
@@ -31,8 +31,8 @@ class Abelian {
   }
 
 
-  trait Semigroup[@specialized A] extends numeric.Semigroup[A] with Magma[A] { 
-    override def dual: Semigroup[A] = new Semigroup.Dual[A] {  
+  trait Semigroup[@specialized A] extends numeric.Semigroup[A] with Magma[A] {
+    override def dual: Semigroup[A] = new Semigroup.Dual[A] {
       override def dual: Semigroup[A] = Semigroup.this
     }
     def *[B](that: Semigroup[B]) = new Semigroup.Product[A,B] {
@@ -61,8 +61,8 @@ class Abelian {
   }
 
 
-  trait Monoid[@specialized A] extends numeric.Monoid[A] with Semigroup[A] { 
-    override def dual: Monoid[A] = new Monoid.Dual[A] {  
+  trait Monoid[@specialized A] extends numeric.Monoid[A] with Semigroup[A] {
+    override def dual: Monoid[A] = new Monoid.Dual[A] {
       override def dual: Monoid[A] = Monoid.this
     }
     def *[B](that: Monoid[B]) = new Monoid.Product[A,B] {
@@ -91,8 +91,8 @@ class Abelian {
     }
   }
 
-  trait Quasigroup[@specialized A] extends numeric.Quasigroup[A] with Magma[A] { 
-    override def dual: Quasigroup[A] = new Quasigroup.Dual[A] {  
+  trait Quasigroup[@specialized A] extends numeric.Quasigroup[A] with Magma[A] {
+    override def dual: Quasigroup[A] = new Quasigroup.Dual[A] {
       override def dual: Quasigroup[A] = Quasigroup.this
     }
     def *[B](that: Quasigroup[B]) = new Quasigroup.Product[A,B] {
@@ -122,8 +122,8 @@ class Abelian {
     }
   }
 
-  trait Loop[@specialized A] extends numeric.Loop[A] with Quasigroup[A] { 
-    override def dual: Loop[A] = new Loop.Dual[A] {  
+  trait Loop[@specialized A] extends numeric.Loop[A] with Quasigroup[A] {
+    override def dual: Loop[A] = new Loop.Dual[A] {
       override def dual: Loop[A] = Loop.this
     }
     def *[B](that: Loop[B]) = new Loop.Product[A,B] {
@@ -154,8 +154,8 @@ class Abelian {
     }
   }
 
-  trait Group[@specialized A] extends numeric.Group[A] with Loop[A] with Monoid[A] { 
-    override def dual: Group[A] = new Group.Dual[A] {  
+  trait Group[@specialized A] extends numeric.Group[A] with Loop[A] with Monoid[A] {
+    override def dual: Group[A] = new Group.Dual[A] {
       override def dual: Group[A] = Group.this
     }
     def *[B](that: Group[B]) = new Group.Product[A,B] {

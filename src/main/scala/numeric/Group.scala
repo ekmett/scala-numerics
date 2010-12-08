@@ -1,27 +1,27 @@
 package numeric
 
 trait Group[@specialized A] extends Loop[A] with Monoid[A] {
-  def inverse(a: A): A 
+  def inverse(a: A): A
   def over(a: A, b: A): A = this(a, inverse(b))
   def under(a: A, b: A): A = this(inverse(a), b)
-  override def dual: Group[A] = new Group.Dual[A] {  
+  override def dual: Group[A] = new Group.Dual[A] {
     override def dual: Group[A] = Group.this
   }
   def *[B](that: Group[B]) = new Group.Product[A,B] {
     def _1: Group[A] = Group.this
     def _2: Group[B] = that
   }
-  implicit override def ops(a: A): Group.Ops[A] = new Group.Ops[A] {
+  implicit override def multiplication(a: A): Group.Multiplication[A] = new Group.Multiplication[A] {
     def lhs: A = a
     def numeric: Group[A] = Group.this
   }
-  override def additive(a: A): Group.AdditiveOps[A] = new Group.AdditiveOps[A] {
+  override def addition(a: A): Group.Addition[A] = new Group.Addition[A] {
     def lhs: A = a
     def numeric: Group[A] = Group.this
   }
 }
 
-object Group { 
+object Group {
   def apply[A](
     f:(A,A) => A,
     inv: A => A,
@@ -31,11 +31,11 @@ object Group {
     def inverse(a: A) = inv(a)
     def e: A = id
   }
-  trait Ops[@specialized A] extends Loop.Ops[A] {
+  trait Multiplication[@specialized A] extends Loop.Multiplication[A] {
     protected def numeric: Group[A]
     def inverse: A = numeric.inverse(lhs)
   }
-  trait AdditiveOps[@specialized A] extends Magma.AdditiveOps[A] { 
+  trait Addition[@specialized A] extends Loop.Addition[A] {
     protected def numeric: Group[A]
     def unary_-(): A = numeric.inverse(lhs)
     def negate: A = numeric.inverse(lhs)

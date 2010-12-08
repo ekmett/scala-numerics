@@ -5,26 +5,30 @@ package numeric
  */
 
 trait Loop[@specialized A] extends Unital[A] with Quasigroup[A] {
-  def left_inverse(x: A): A = over(e,x)
-  def right_inverse(x: A): A = under(x,e)
-  override def dual: Loop[A] = new Loop.Dual[A] {  
+  def leftInverse(x: A): A = over(e,x)
+  def rightInverse(x: A): A = under(x,e)
+  override def dual: Loop[A] = new Loop.Dual[A] {
     override def dual: Loop[A] = Loop.this
   }
   def *[B](that: Loop[B]) = new Loop.Product[A,B] {
     def _1: Loop[A] = Loop.this
     def _2: Loop[B] = that
   }
-  implicit override def ops(a: A): Loop.Ops[A] = new Loop.Ops[A] { 
+  implicit override def multiplication(a: A): Loop.Multiplication[A] = new Loop.Multiplication[A] {
+    def lhs: A = a
+    def numeric: Loop[A] = Loop.this
+  }
+  implicit override def addition(a: A): Loop.Addition[A] = new Loop.Addition[A] {
     def lhs: A = a
     def numeric: Loop[A] = Loop.this
   }
 }
 
 
-object Loop { 
+object Loop {
   def apply[A](
     f:(A,A) => A,
-    o:(A,A) => A, 
+    o:(A,A) => A,
     u:(A,A) => A,
     id: A
   ) : Loop[A] = new Loop[A] {
@@ -34,10 +38,15 @@ object Loop {
     def e: A = id
   }
   trait Dual[@specialized A] extends Quasigroup.Dual[A] with Unital.Dual[A] with Loop[A]
-  trait Ops[@specialized A] extends Quasigroup.Ops[A] {
+  trait Multiplication[@specialized A] extends Quasigroup.Multiplication[A] {
     protected def numeric: Loop[A]
-    def leftInverse: A = numeric.left_inverse(lhs)
-    def rightInverse: A = numeric.right_inverse(lhs)
+    def leftInverse: A = numeric.leftInverse(lhs)
+    def rightInverse: A = numeric.rightInverse(lhs)
+  }
+  trait Addition[@specialized A] extends Quasigroup.Addition[A] {
+    protected def numeric: Loop[A]
+    def leftNegation: A = numeric.leftInverse(lhs)
+    def rightNegation: A = numeric.rightInverse(lhs)
   }
   trait Product[A,B] extends Quasigroup.Product[A,B] with Unital.Product[A,B] with Loop[(A,B)] {
     def _1: Loop[A]

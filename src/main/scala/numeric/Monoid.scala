@@ -5,7 +5,7 @@ package numeric
  */
 
 trait Monoid[@specialized A] extends Unital[A] with Semigroup[A] {
-  override def dual: Monoid[A] = new Monoid.Dual[A] {  
+  override def dual: Monoid[A] = new Monoid.Dual[A] {
     override def dual: Monoid[A] = Monoid.this
   }
   def *[B](that: Monoid[B]) = new Monoid.Product[A,B] {
@@ -14,9 +14,9 @@ trait Monoid[@specialized A] extends Unital[A] with Semigroup[A] {
   }
 }
 
-object Monoid { 
+object Monoid {
   def apply[A](
-    f:(A,A) => A,
+    f: (A,A) => A,
     id: A
   ) : Monoid[A] = new Monoid[A] {
     def apply(a: A, b: A): A = f(a,b)

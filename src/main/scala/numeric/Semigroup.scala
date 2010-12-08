@@ -1,7 +1,7 @@
 package numeric
 
 trait Semigroup[@specialized A] extends Magma[A] {
-  override def dual: Semigroup[A] = new Semigroup.Dual[A] {  
+  override def dual: Semigroup[A] = new Semigroup.Dual[A] {
     override def dual: Semigroup[A] = Semigroup.this
   }
   def *[B](that: Semigroup[B]) = new Semigroup.Product[A,B] {
@@ -10,7 +10,7 @@ trait Semigroup[@specialized A] extends Magma[A] {
   }
 }
 
-object Semigroup { 
+object Semigroup {
   def apply[A](f:(A,A) => A) : Semigroup[A] = new Semigroup[A] {
     def apply(a: A, b: A): A = f(a,b)
   }
