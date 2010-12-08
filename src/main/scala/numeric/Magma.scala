@@ -13,6 +13,10 @@ trait Magma[@specialized A] {
     def lhs: A = a
     def numeric: Magma[A] = Magma.this
   }
+  def additive(a: A): Magma.AdditiveOps[A] = new Magma.AdditiveOps[A] {
+    def lhs: A = a
+    def numeric: Magma[A] = Magma.this
+  }
 }
 
 object Magma { 
@@ -23,6 +27,11 @@ object Magma {
     protected def lhs: A
     protected def numeric: Magma[A]
     def *(rhs: A): A = numeric(lhs,rhs)
+  }
+  trait AdditiveOps[@specialized A] { 
+    protected def lhs: A
+    protected def numeric: Magma[A]
+    def +(rhs: A): A = numeric(lhs,rhs)
   }
   trait Dual[@specialized A] extends Magma[A] { 
     def apply(a: A, b: A) = dual(b,a)

@@ -15,6 +15,10 @@ trait Group[@specialized A] extends Loop[A] with Monoid[A] {
     def lhs: A = a
     def numeric: Group[A] = Group.this
   }
+  override def additive(a: A): Group.AdditiveOps[A] = new Group.AdditiveOps[A] {
+    def lhs: A = a
+    def numeric: Group[A] = Group.this
+  }
 }
 
 object Group { 
@@ -30,6 +34,11 @@ object Group {
   trait Ops[@specialized A] extends Loop.Ops[A] {
     protected def numeric: Group[A]
     def inverse: A = numeric.inverse(lhs)
+  }
+  trait AdditiveOps[@specialized A] extends Magma.AdditiveOps[A] { 
+    protected def numeric: Group[A]
+    def unary_-(): A = numeric.inverse(lhs)
+    def negate: A = numeric.inverse(lhs)
   }
   trait Dual[@specialized A] extends Loop[A] with Monoid.Dual[A] with Group[A] {
     def inverse(a: A) = dual.inverse(a)
