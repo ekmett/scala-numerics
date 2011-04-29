@@ -15,9 +15,9 @@ object Semigroup {
     def apply(a: A, b: A): A = f(a,b)
   }
   trait Dual[@specialized A] extends Magma.Dual[A] with Semigroup[A]
-  trait Product[A,B] extends Magma.Product[A,B] with Semigroup[(A,B)] {
-    def _1: Semigroup[A]
-    def _2: Semigroup[B]
+  trait Product[A,B] extends Magma.Product[A,B] 
+                        with Semigroup[(A,B)] 
+                        with ProductLike[Semigroup,A,B] {
     override def dual: Product[A,B] = new Product.Dual[A,B] {
       override def dual: Product[A,B] = Product.this
     }

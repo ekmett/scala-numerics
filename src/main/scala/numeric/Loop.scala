@@ -4,7 +4,10 @@ package numeric
  * A quasigroup with and an identity: <code>x*e = x = e*x</code>
  */
 
-trait Loop[@specialized A] extends Unital[A] with Quasigroup[A] {
+trait Loop[@specialized A] extends Unital[A] 
+                              with Quasigroup[A] 
+                              with Multiplicative[A,Loop[A],Loop.Multiplication[A]]
+                              with Additive[A,Loop[A],Loop.Addition[A]] {
   def leftInverse(x: A): A = over(e,x)
   def rightInverse(x: A): A = under(x,e)
   override def dual: Loop[A] = new Loop.Dual[A] {
@@ -18,7 +21,7 @@ trait Loop[@specialized A] extends Unital[A] with Quasigroup[A] {
     def lhs: A = a
     def numeric: Loop[A] = Loop.this
   }
-  implicit override def addition(a: A): Loop.Addition[A] = new Loop.Addition[A] {
+  override def addition(a: A): Loop.Addition[A] = new Loop.Addition[A] {
     def lhs: A = a
     def numeric: Loop[A] = Loop.this
   }
@@ -38,19 +41,18 @@ object Loop {
     def e: A = id
   }
   trait Dual[@specialized A] extends Quasigroup.Dual[A] with Unital.Dual[A] with Loop[A]
-  trait Multiplication[@specialized A] extends Quasigroup.Multiplication[A] {
-    protected def numeric: Loop[A]
+  trait Multiplication[@specialized A] extends Quasigroup.Multiplication[A] with Ops[A,Loop[A]]{
     def leftInverse: A = numeric.leftInverse(lhs)
     def rightInverse: A = numeric.rightInverse(lhs)
   }
-  trait Addition[@specialized A] extends Quasigroup.Addition[A] {
-    protected def numeric: Loop[A]
+  trait Addition[@specialized A] extends Quasigroup.Addition[A] with Ops[A,Loop[A]] {
     def leftNegation: A = numeric.leftInverse(lhs)
     def rightNegation: A = numeric.rightInverse(lhs)
   }
-  trait Product[A,B] extends Quasigroup.Product[A,B] with Unital.Product[A,B] with Loop[(A,B)] {
-    def _1: Loop[A]
-    def _2: Loop[B]
+  trait Product[A,B] extends Quasigroup.Product[A,B] 
+                        with Unital.Product[A,B] 
+                        with ProductLike[Loop,A,B]
+                        with Loop[(A,B)] {
     override def dual: Product[A,B] = new Product.Dual[A,B] {
       override def dual: Product[A,B] = Product.this
     }

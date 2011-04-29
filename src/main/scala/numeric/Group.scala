@@ -1,6 +1,9 @@
 package numeric
 
-trait Group[@specialized A] extends Loop[A] with Monoid[A] {
+trait Group[@specialized A] extends Loop[A] 
+                               with Monoid[A] 
+                               with Multiplicative[A,Group[A],Group.Multiplication[A]]
+                               with Additive[A,Group[A],Group.Addition[A]] {
   def inverse(a: A): A
   def over(a: A, b: A): A = this(a, inverse(b))
   def under(a: A, b: A): A = this(inverse(a), b)
@@ -31,21 +34,22 @@ object Group {
     def inverse(a: A) = inv(a)
     def e: A = id
   }
-  trait Multiplication[@specialized A] extends Loop.Multiplication[A] {
-    protected def numeric: Group[A]
+  trait Multiplication[@specialized A] extends Loop.Multiplication[A] 
+                                          with Ops[A,Group[A]] {
     def inverse: A = numeric.inverse(lhs)
   }
-  trait Addition[@specialized A] extends Loop.Addition[A] {
-    protected def numeric: Group[A]
+  trait Addition[@specialized A] extends Loop.Addition[A] 
+                                    with Ops[A,Group[A]] {
     def unary_-(): A = numeric.inverse(lhs)
     def negate: A = numeric.inverse(lhs)
   }
   trait Dual[@specialized A] extends Loop[A] with Monoid.Dual[A] with Group[A] {
     def inverse(a: A) = dual.inverse(a)
   }
-  trait Product[A,B] extends Loop.Product[A,B] with Monoid.Product[A,B] with Group[(A,B)] {
-    def _1: Group[A]
-    def _2: Group[B]
+  trait Product[A,B] extends Loop.Product[A,B] 
+                        with Monoid.Product[A,B] 
+                        with Group[(A,B)] 
+                        with ProductLike[Group,A,B] {
     def inverse(a: (A,B)): (A,B) = (_1.inverse(a._1),_2.inverse(a._2))
     override def under(a: (A,B), b: (A,B)): (A,B) =  (_1.under(a._1,b._1), _2.under(a._2,b._2))
     override def over(a: (A,B), b: (A,B)): (A,B) = (_1.over(a._1,b._1), _2.over(a._2,b._2))

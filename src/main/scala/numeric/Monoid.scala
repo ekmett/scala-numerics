@@ -23,7 +23,7 @@ object Monoid {
     def e: A = id
   }
   trait Dual[@specialized A] extends Semigroup.Dual[A] with Unital.Dual[A] with Monoid[A]
-  trait Product[A,B] extends Semigroup.Product[A,B] with Unital.Product[A,B] with Monoid[(A,B)] {
+  trait Product[A,B] extends Semigroup.Product[A,B] with Unital.Product[A,B] with Monoid[(A,B)] with ProductLike[Monoid,A,B] {
     def _1: Monoid[A]
     def _2: Monoid[B]
     override def dual: Product[A,B] = new Product.Dual[A,B] {

@@ -1,7 +1,10 @@
 package numeric
 
-class Abelian {
-  trait Magma[@specialized A] extends numeric.Magma[A] {
+/** An Abelian {Magma,Semigroup,Monoid,Quasigroup,Loop,Group} is commutative. Not enforced, but this is a hint. */
+trait Abelian
+
+trait AbelianCompanion {
+  trait Magma[@specialized A] extends numeric.Magma[A] with Abelian {
     override def dual: Magma[A] = new Magma.Dual[A] {
       override def dual: Magma[A] = Magma.this
     }
@@ -15,9 +18,7 @@ class Abelian {
       def apply(a: A, b: A): A = f(a,b)
     }
     trait Dual[@specialized A] extends numeric.Magma.Dual[A] with Magma[A]
-    trait Product[A,B] extends numeric.Magma.Product[A,B] with Magma[(A,B)] {
-      def _1: Magma[A]
-      def _2: Magma[B]
+    trait Product[A,B] extends numeric.Magma.Product[A,B] with Magma[(A,B)] with ProductLike[Magma,A,B] {
       override def dual: Product[A,B] = new Product.Dual[A,B] {
         override def dual: Product[A,B] = Product.this
       }
@@ -45,9 +46,7 @@ class Abelian {
       def apply(a: A, b: A): A = f(a,b)
     }
     trait Dual[@specialized A] extends numeric.Semigroup.Dual[A] with Semigroup[A]
-    trait Product[A,B] extends numeric.Semigroup.Product[A,B] with Semigroup[(A,B)] {
-      def _1: Semigroup[A]
-      def _2: Semigroup[B]
+    trait Product[A,B] extends numeric.Semigroup.Product[A,B] with Semigroup[(A,B)] with ProductLike[Semigroup,A,B] {
       override def dual: Product[A,B] = new Product.Dual[A,B] {
         override def dual: Product[A,B] = Product.this
       }
@@ -76,9 +75,7 @@ class Abelian {
       def e: A = id
     }
     trait Dual[@specialized A] extends numeric.Monoid.Dual[A] with Monoid[A]
-    trait Product[A,B] extends numeric.Monoid.Product[A,B] with Monoid[(A,B)] {
-      def _1: Monoid[A]
-      def _2: Monoid[B]
+    trait Product[A,B] extends numeric.Monoid.Product[A,B] with Monoid[(A,B)] with ProductLike[Monoid,A,B] {
       override def dual: Product[A,B] = new Product.Dual[A,B] {
         override def dual: Product[A,B] = Product.this
       }
@@ -107,9 +104,7 @@ class Abelian {
       def under(a: A, b: A): A = u(a,b)
     }
     trait Dual[@specialized A] extends numeric.Quasigroup.Dual[A] with Quasigroup[A]
-    trait Product[A,B] extends numeric.Quasigroup.Product[A,B] with Quasigroup[(A,B)] {
-      def _1: Quasigroup[A]
-      def _2: Quasigroup[B]
+    trait Product[A,B] extends numeric.Quasigroup.Product[A,B] with Quasigroup[(A,B)] with ProductLike[Quasigroup,A,B] {
       override def dual: Product[A,B] = new Product.Dual[A,B] {
         override def dual: Product[A,B] = Product.this
       }
@@ -139,9 +134,7 @@ class Abelian {
       def e: A = id
     }
     trait Dual[@specialized A] extends numeric.Loop.Dual[A] with Loop[A]
-    trait Product[A,B] extends numeric.Loop.Product[A,B] with Loop[(A,B)] {
-      def _1: Loop[A]
-      def _2: Loop[B]
+    trait Product[A,B] extends numeric.Loop.Product[A,B] with Loop[(A,B)] with ProductLike[Loop,A,B] {
       override def dual: Product[A,B] = new Product.Dual[A,B] {
         override def dual: Product[A,B] = Product.this
       }
@@ -170,9 +163,7 @@ class Abelian {
       def e: A = id
     }
     trait Dual[@specialized A] extends numeric.Group.Dual[A] with Group[A]
-    trait Product[A,B] extends numeric.Group.Product[A,B] with Group[(A,B)] {
-      def _1: Group[A]
-      def _2: Group[B]
+    trait Product[A,B] extends numeric.Group.Product[A,B] with Group[(A,B)] with ProductLike[Group,A,B] {
       override def dual: Product[A,B] = new Product.Dual[A,B] {
         override def dual: Product[A,B] = Product.this
       }
@@ -187,5 +178,4 @@ class Abelian {
 }
 
 // aliasing
-object Abelian extends Abelian
-object Commutative extends Abelian
+object Abelian extends AbelianCompanion

@@ -10,7 +10,9 @@ package numeric
  * </ol>
  */
 
-trait Quasigroup[@specialized A] extends Magma[A] {
+trait Quasigroup[@specialized A] extends Magma[A] 
+                                    with Additive[A,Quasigroup[A],Quasigroup.Addition[A]] 
+                                    with Multiplicative[A,Quasigroup[A],Quasigroup.Multiplication[A]] {
   /** a / b */
   def over(a: A, b: A): A
   /** a \ b */
@@ -47,19 +49,15 @@ object Quasigroup {
     def over(a: A, b: A): A = dual.over(b,a)
     def under(a: A, b: A): A = dual.under(b,a)
   }
-  trait Multiplication[@specialized A] extends Magma.Multiplication[A] {
-    protected def numeric: Quasigroup[A]
+  trait Multiplication[@specialized A] extends Magma.Multiplication[A] with Ops[A, Quasigroup[A]] {
     def /(rhs: A): A = numeric.over(lhs,rhs)
     def \(rhs: A): A = numeric.under(lhs,rhs)
   }
-  trait Addition[@specialized A] extends Magma.Addition[A] {
-    protected def numeric: Quasigroup[A]
+  trait Addition[@specialized A] extends Magma.Addition[A] with Ops[A, Quasigroup[A]] {
     def -(rhs: A): A = numeric.over(lhs,rhs)
     def subtract(rhs: A): A = numeric.under(lhs,rhs)
   }
-  trait Product[A,B] extends Magma.Product[A,B] with Quasigroup[(A,B)] {
-    def _1: Quasigroup[A]
-    def _2: Quasigroup[B]
+  trait Product[A,B] extends Magma.Product[A,B] with Quasigroup[(A,B)] with ProductLike[Quasigroup,A,B] {
     def over(a: (A,B), b: (A,B)): (A,B) = (_1.over(a._1,b._1), _2.over(a._2,b._2))
     def under(a: (A,B), b: (A,B)): (A,B) = (_1.under(a._1,b._1), _2.under(a._2,b._2))
     override def dual: Product[A,B] = new Product.Dual[A,B] {

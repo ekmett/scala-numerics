@@ -1,6 +1,7 @@
 package numeric
 
-trait Magma[@specialized A] {
+trait Magma[@specialized A] extends Additive[A, Magma[A], Magma.Addition[A]] 
+                               with Multiplicative[A, Magma[A], Magma.Multiplication[A]] {
   def apply(a: A, b: A): A
   def dual: Magma[A] = new Magma.Dual[A] {
     override def dual: Magma[A] = Magma.this
@@ -23,22 +24,16 @@ object Magma {
   def apply[A](f:(A,A) => A) : Magma[A] = new Magma[A] {
     def apply(a: A, b: A): A = f(a,b)
   }
-  trait Multiplication[@specialized A] {
-    protected def lhs: A
-    protected def numeric: Magma[A]
+  trait Multiplication[@specialized A] extends Ops[Magma[A],A] {
     def *(rhs: A): A = numeric(lhs,rhs)
   }
-  trait Addition[@specialized A] {
-    protected def lhs: A
-    protected def numeric: Magma[A]
+  trait Addition[@specialized A] extends Ops[Magma[A],A] {
     def +(rhs: A): A = numeric(lhs,rhs)
   }
   trait Dual[@specialized A] extends Magma[A] {
     def apply(a: A, b: A) = dual(b,a)
   }
-  trait Product[A,B] extends Magma[(A,B)] {
-    def _1: Magma[A]
-    def _2: Magma[B]
+  trait Product[A,B] extends Magma[(A,B)] with ProductLike[Magma,A,B] {
     def apply(a: (A,B), b: (A,B)) = (_1(a._1,b._1),_2(a._2,b._2))
     override def dual: Product[A,B] = new Product.Dual[A,B] {
       override def dual: Product[A,B] = Product.this

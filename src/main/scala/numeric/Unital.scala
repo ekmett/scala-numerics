@@ -18,9 +18,7 @@ object Unital {
   trait Dual[@specialized A] extends Unital[A] {
     def e: A = dual.e
   }
-  trait Product[A,B] extends Unital[(A,B)] {
-    def _1: Unital[A]
-    def _2: Unital[B]
+  trait Product[A,B] extends Unital[(A,B)] with ProductLike[Unital,A,B] {
     def e: (A,B)  = (_1.e,_2.e)
     override def dual: Product[A,B] = new Product.Dual[A,B] {
       override def dual: Product[A,B] = Product.this
