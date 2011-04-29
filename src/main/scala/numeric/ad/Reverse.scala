@@ -12,16 +12,18 @@ object Reverse {
     def sensitivities(top : Int): Array[A] = { 
       var result = Array.tabulate[A](top + 1)(n => if (n == top) A.one else A.zero)
       // now iterate backwards across the tape
-      top max 1 to 1 by -1 foreach (n => buffer(n) match { 
-        case Zero => ()
-        case Var => ()
-        case Unary(dadb, bix) => result[bix] = result[bix] + dadb * result[n]
-        case Binary(dadb, bix, dadc, cix) => {
-          result[bix] = result[bix] + dadb * result[n]
-          result[cix] = result[cix] + dadc * result[n]
+      top max 1 to 1 by -1 foreach { 
+        n => buffer(n) match { 
+          case Zero => ()
+          case Var => ()
+          case Unary(dadb, bix) => result.update(bix, result(bix) + dadb * result(n))
+          case Binary(dadb, bix, dadc, cix) => {
+            result.update(bix, result(bix) + dadb * result(n))
+            result.update(cix, result(cix) + dadc * result(n))
+          }
         }
       }
-      (x : Reverse[A]) => result[x.slot]
+      (x : Reverse[A]) => result(x.slot)
     }
     def pushSlot(e: Entry[A]) : Int = synchronized { 
       val len = buffer.length
